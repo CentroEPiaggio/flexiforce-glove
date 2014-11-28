@@ -32,3 +32,74 @@
  *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  *  POSSIBILITY OF SUCH DAMAGE.
  *********************************************************************/
+
+// in case it does not connect with the board, uncomment this
+// taken from http://answers.ros.org/question/164191/rosserial-arduino-cant-connect-arduino-micro/
+// #define USE_USBCON
+
+#include <ros.h>
+#include <std_msgs/Int16MultiArray.h>
+
+// necessary to compile code outside arduino IDE
+#include <Arduino.h>
+
+// use underscore for global variables
+
+ros::NodeHandle nh_;
+
+std_msgs::Int16MultiArray sensor_values_;
+std_msgs::Int16MultiArray ports_;
+unsigned int n_sensors_;
+
+bool isConfigured = false;
+bool isInformed = false;
+
+void configurePorts(const std_msgs::Int16MultiArray & ports)
+{
+  n_sensors_ = ports.data_length;
+  sensor_values_.data_length = n_sensors_;
+  ports_.data_length = n_sensors_;
+  
+  ports_.data = ports.data;
+
+  isConfigured = true;
+  isInformed = true;
+}
+
+ros::Publisher pub_sensor_values_("/flexiforce/flexiforce_raw_values", &sensor_values_);
+ros::Subscriber<std_msgs::Int16MultiArray> sub_ports_("/flexiforce/connected_ports", configurePorts);
+
+void setup() 
+{
+  nh_.initNode();
+  nh_.advertise(pub_sensor_values_);
+}
+
+void loop() 
+{
+  if(isConfigured)
+  {
+    // fill message once it is configured
+    for(int i = 0; i < n_sensors_; i++)
+    {
+      sensor_values_.data[i] = analogRead( ports_.data[i] );
+    }
+
+    // publish the message
+    pub_sensor_values_.publish(&sensor_values_);
+  }
+  else
+  {
+    // inform the user what to do to configure the ports only once
+    if(!isInformed)
+    {
+      //ROS_INFO("Arduino ports are not configured. Set the yaml file properly and launch the flexiforce_joint_state_publisher node");  
+      isInformed = true;
+    }
+
+  }
+
+  // spin and delay
+  nh_.spinOnce();
+  delay(100);
+}

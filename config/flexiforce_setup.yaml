@@ -1,0 +1,115 @@
+# Each struct represent a sensor
+# name: the name of the sensor, for now just for id
+# analog_port: the actual analog_port in the arduino board
+# gain: the gain to calibrate the raw value, obtained empirically for now
+# bias: the constant value to calibrate the raw value, obtained empirically for now
+# joints: 
+#     name: the name of the joints it is meant to obtain for
+#     ratio: the ratio used to divide the calibrated value
+flexiforce_sensors:
+  - name: "thumb"
+    analog_port: 0
+    # 0.5732*pi/180
+    gain: 0.01
+    bias: 0.0
+    joints:
+      - name: "thumb_inner_joint"
+        ratio: 0.5
+      - name: "thumb_inner_joint_mimic"
+        ratio: 0.5
+      - name: "thumb_outer_joint"
+        ratio: 0.16
+      - name: "thumb_outer_joint_mimic"
+        ratio: 0.16
+
+  - name: "index"
+    analog_port: 3
+    # 0.5590*pi/180
+    gain: 0.0097
+    bias: 0.0
+    joints:
+      - name: "index_inner_joint"
+        ratio: 0.5
+      - name: "index_inner_joint_mimic"
+        ratio: 0.5
+      - name: "index_middle_joint"
+        ratio: 0.5
+      - name: "index_middle_joint_mimic"
+        ratio: 0.5
+      - name: "index_outer_joint"
+        ratio: 0.16
+      - name: "index_outer_joint_mimic"
+        ratio: 0.16
+
+  - name: "middle"
+    analog_port: 5
+    #0.8833*pi/180
+    gain: 0.0154
+    bias: 0.0
+    joints:
+      - name: "middle_inner_joint"
+        ratio: 0.5
+      - name: "middle_inner_joint_mimic"
+        ratio: 0.5
+      - name: "middle_middle_joint"
+        ratio: 0.5
+      - name: "middle_middle_joint_mimic"
+        ratio: 0.5
+      - name: "middle_outer_joint"
+        ratio: 0.16
+      - name: "middle_outer_joint_mimic"
+        ratio: 0.16
+
+  - name: "ring"
+    analog_port: 7
+    #0.6569*pi/180
+    gain: 0.0114
+    bias: 0.0
+    joints:
+      - name: "ring_inner_joint"
+        ratio: 0.5
+      - name: "ring_inner_joint_mimic"
+        ratio: 0.5
+      - name: "ring_middle_joint"
+        ratio: 0.5
+      - name: "ring_middle_joint_mimic"
+        ratio: 0.5
+      - name: "ring_outer_joint"
+        ratio: 0.16
+      - name: "ring_outer_joint_mimic"
+        ratio: 0.16
+
+  - name: "little"
+    analog_port: 6
+    #1.0345*pi/180
+    gain: 0.01805
+    bias: 0.0
+    joints:
+      - name: "little_inner_joint"
+        ratio: 0.5
+      - name: "little_inner_joint_mimic"
+        ratio: 0.5
+      - name: "little_middle_joint"
+        ratio: 0.5
+      - name: "little_middle_joint_mimic"
+        ratio: 0.5
+      - name: "little_outer_joint"
+        ratio: 0.16
+      - name: "little_outer_joint_mimic"
+        ratio: 0.16
+
+  - name: "thumb_abd"
+    analog_port: 1
+    gain: 0.01
+    bias: 0.0
+    joints:
+      - name: "thumb_abd_joint"
+        ratio: 1.0
+
+  - name: "little_abd"
+    analog_port: 9
+    gain: -0.00969
+    bias: 0.0
+    joints:
+      - name: "little_abd_joint"
+        ratio: 1.0

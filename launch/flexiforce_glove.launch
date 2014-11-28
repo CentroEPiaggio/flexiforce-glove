@@ -1,0 +1,18 @@
+<launch>
+	<!-- specify whether the arduino board is connected or not -->
+	<arg name="isBoardConnected" default="false"/>
+
+	<!-- remember to set the parameters properly -->
+	<rosparam command="load" file="$(find sensor_gloves)/config/flexiforce_setup.yaml" />
+	<param name="hand_name" value="soft_hand"/>
+	<node name="flexiforce_publisher" pkg="sensor_gloves" type="flexiforce_joint_state_publisher" respawn="false" output="screen"/> 
+
+	<!-- launch the arduino USB connection if connected -->
+	<group if="$(arg isBoardConnected)">
+		<node name="arduino_node" pkg="rosserial_python" type="serial_node.py">
+			<param name="~port" value="/dev/ttyACM0" />
+	        <param name="~baud" value="115200" />
+		</node>
+	</group>
+
+</launch>

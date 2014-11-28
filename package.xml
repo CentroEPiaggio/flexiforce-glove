@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<package>
+  <name>sensor_gloves</name>
+  <version>0.0.0</version>
+  <description>The sensor_gloves package</description>
+
+  <maintainer email="cjrosales@gmail.com">Carlos Rosales</maintainer>
+
+  <license>BSD</license>
+
+  <!-- developed under the PaCMan project -->
+  <url type="project">http://www.pacman-project.eu/</url>
+  <url type="repository">https://github.com/CentroEPiaggio/sensor-gloves</url>
+
+  <author email="santaeragaspare@inwind.it">Gaspare Santaera</author>
+  <author email="ema.lbt@hotmail.it">Emanuele Luberto</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <export>
+  </export>
+</package>

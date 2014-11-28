@@ -35,7 +35,7 @@
 
 // in case it does not connect with the board, uncomment this
 // taken from http://answers.ros.org/question/164191/rosserial-arduino-cant-connect-arduino-micro/
-// #define USE_USBCON
+#define USE_USBCON
 
 #include <ros.h>
 #include <std_msgs/Int16MultiArray.h>
@@ -49,30 +49,37 @@ ros::NodeHandle nh_;
 
 std_msgs::Int16MultiArray sensor_values_;
 std_msgs::Int16MultiArray ports_;
-unsigned int n_sensors_;
 
 bool isConfigured = false;
 bool isInformed = false;
 
 void configurePorts(const std_msgs::Int16MultiArray & ports)
 {
-  n_sensors_ = ports.data_length;
-  sensor_values_.data_length = n_sensors_;
-  ports_.data_length = n_sensors_;
-  
-  ports_.data = ports.data;
+  if(!isConfigured)
+  {
+    /*sensor_values_.data_length = (int)ports.data_length;
+    ports_.data_length = (int)ports.data_length;
+ 
+    // copy the port numbers
+    for(int i = 0; i < ports.data_length; i++)
+    {
+      ports_.data[i] = (int)ports.data[i];
+    }*/
 
-  isConfigured = true;
-  isInformed = true;
+    isConfigured = true;
+    isInformed = true;
+  }
 }
 
 ros::Publisher pub_sensor_values_("/flexiforce/flexiforce_raw_values", &sensor_values_);
-ros::Subscriber<std_msgs::Int16MultiArray> sub_ports_("/flexiforce/connected_ports", configurePorts);
+ros::Subscriber<std_msgs::Int16MultiArray> sub_ports_("/flexiforce/connected_ports", &configurePorts);
 
 void setup() 
 {
   nh_.initNode();
   nh_.advertise(pub_sensor_values_);
+  nh_.subscribe(sub_ports_);
+  sensor_values_.data_length = 7;
 }
 
 void loop() 
@@ -80,10 +87,19 @@ void loop()
   if(isConfigured)
   {
     // fill message once it is configured
-    for(int i = 0; i < n_sensors_; i++)
+    /*for(int i = 0; i < sensor_values_.data_length; i++)
     {
-      sensor_values_.data[i] = analogRead( ports_.data[i] );
+      sensor_values_.data[i] = analogRead( (unsigned int)ports_.data[i] );
     }
+    */
+    
+    sensor_values_.data[0] = analogRead( 0 );
+    sensor_values_.data[1] = analogRead( 3 );
+    sensor_values_.data[2] = analogRead( 5 );
+    sensor_values_.data[3] = analogRead( 7 );
+    sensor_values_.data[4] = analogRead( 6 );
+    sensor_values_.data[5] = analogRead( 1 );
+    sensor_values_.data[6] = analogRead( 9 );
 
     // publish the message
     pub_sensor_values_.publish(&sensor_values_);

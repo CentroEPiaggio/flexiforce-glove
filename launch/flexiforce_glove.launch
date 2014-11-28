@@ -1,6 +1,6 @@
 <launch>
 	<!-- specify whether the arduino board is connected or not -->
-	<arg name="isBoardConnected" default="false"/>
+	<arg name="isBoardConnected" default="true"/>
 
 	<!-- remember to set the parameters properly -->
 	<rosparam command="load" file="$(find sensor_gloves)/config/flexiforce_setup.yaml" />
@@ -10,7 +10,7 @@
 	<!-- launch the arduino USB connection if connected -->
 	<group if="$(arg isBoardConnected)">
 		<node name="arduino_node" pkg="rosserial_python" type="serial_node.py">
-			<param name="~port" value="/dev/ttyACM0" />
+			<param name="~port" value="/dev/ttyACM2" />
 	        <param name="~baud" value="115200" />
 		</node>
 	</group>

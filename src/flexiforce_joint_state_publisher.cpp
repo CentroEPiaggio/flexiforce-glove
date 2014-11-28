@@ -52,7 +52,7 @@ std_msgs::Int16MultiArray msg_ports_;
 std::vector<double> gains_;
 std::vector<double> bias_;
 std::vector<int> n_joints_at_sensor;
-std::map< std::string, double > joint_ratios_;
+std::vector<double> joint_ratios_;
 std::string hand_name_;
 
 // publishers and subscribers
@@ -114,6 +114,7 @@ void parseParameters(const XmlRpc::XmlRpcValue &sensors)
     {
         ROS_ASSERT(current_sensor["gain"].getType() == XmlRpc::XmlRpcValue::TypeDouble);
         gains_[i] = current_sensor["gain"];
+        std::cout << current_sensor["name"] << " gain " << gains_[i] << std::endl;
     }
     else
     {
@@ -125,6 +126,8 @@ void parseParameters(const XmlRpc::XmlRpcValue &sensors)
     {
         ROS_ASSERT(current_sensor["bias"].getType() == XmlRpc::XmlRpcValue::TypeDouble);
         bias_[i] = current_sensor["bias"];
+
+        std::cout << current_sensor["name"] << " bias " << bias_[i] << std::endl;
     }
     else
     {
@@ -146,7 +149,7 @@ void parseParameters(const XmlRpc::XmlRpcValue &sensors)
             if( current_joint.hasMember("name") )
             {
                 ROS_ASSERT(current_joint["name"].getType() == XmlRpc::XmlRpcValue::TypeString);
-                joint_states_.name.push_back( hand_name_ + std::string("_") + std::string(current_joint["name"]) );
+                joint_states_.name.push_back( hand_name_ + std::string("_") + std::string(current_joint["name"]) );                
             }
             else
             {
@@ -157,8 +160,8 @@ void parseParameters(const XmlRpc::XmlRpcValue &sensors)
             if( current_joint.hasMember("ratio") )
             {
                 ROS_ASSERT(current_joint["ratio"].getType() == XmlRpc::XmlRpcValue::TypeDouble);
-
-                joint_ratios_.insert( std::pair<std::string, double>( std::string(current_joint["name"]), current_joint["ratio"]) );
+                joint_ratios_.push_back( current_joint["ratio"] );
+                std::cout << joint_states_.name[j] << " ratio " << joint_ratios_[j] << std::endl;
             }
             else
             {
@@ -190,13 +193,13 @@ void publishJointStates(const std_msgs::Int16MultiArray &data)
 {
     for(int i = 0; i < n_sensors_; i++)
     {
-        // first calibrate data
+        // first calibrate data     
         calibrated_data_.data[i] = data.data[i]*gains_[i] + bias_[i];
 
         // second compute joint angles
         for(int j = 0; j < n_joints_at_sensor[i]; j++)
-        {
-            joint_states_.position[j] = calibrated_data_.data[i]*joint_ratios_[ joint_states_.name[j] ];
+        {            
+            joint_states_.position[j] = calibrated_data_.data[i]*joint_ratios_[j];
         }
     }
 
@@ -221,13 +224,18 @@ int main(int argc, char** argv)
     pub_joint_states_ = nh_.advertise<sensor_msgs::JointState>("/flexiforce/joint_states", 1000);
     pub_flexiforce_calibrated_ = nh_.advertise<std_msgs::Int16MultiArray>("/flexiforce/flexiforce_calibrated_values", 1000);
     // latch the port configuration
-    pub_flexiforce_analog_ports_ = nh_.advertise<std_msgs::Int16MultiArray>("/flexiforce/connected_ports", 1000, true); 
+    pub_flexiforce_analog_ports_ = nh_.advertise<std_msgs::Int16MultiArray>("/flexiforce/connected_ports", 1000); 
 
     // get the parameters form the rosparam server defined in the yaml file and store them
     nh_.getParam("flexiforce_sensors", flexiforce_setup_);
     parseParameters( flexiforce_setup_ );
 
-    ros::spin();    
+    while(ros::ok())
+    {
+        // keep publishing the port configuration to guarantee the configuration
+        pub_flexiforce_analog_ports_.publish(msg_ports_);
+        ros::spinOnce();
+    }
 
     return 0;
 }

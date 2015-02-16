@@ -18,7 +18,7 @@ And upload the firmware with (for Arduino Micro you should do it by pushing the 
 
 `catkin_make sensor_gloves_firmware_flexiforce-upload`
 
-Note: Check that the arduino board connects to `/dev/ttyACM0`, otherwise you need to change the `firmware/CMakeLists.txt` file, you will se the PORT label, and provide privileges with `sudo chmod 777 /dev/ttyACM0`.
+Note: Check that the arduino board connects to `/dev/ttyACM0`, otherwise you need to change the `firmware/CMakeLists.txt` file as well as `launch/flexiforce_glove.launch`, you will se the PORT label, and provide privileges with `sudo chmod 777 /dev/ttyACM0`.
 
 Tip: add your user to the `dialout` group to avoid sudoing by running:
 
@@ -58,3 +58,4 @@ data:
 Check the result with `rostopic echo /flexiforce/joint_states`, or any other topic.
 
 ToDO: calibration method to obtain gain and offset for each sensor automatically.
+ToDO: check that the number of sensor in yaml file matches the size of the raw data.

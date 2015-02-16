@@ -6,6 +6,7 @@
 # joints: 
 #     name: the name of the joints it is meant to obtain for
 #     ratio: the ratio used to divide the calibrated value
+# the order matters since the analog_port field is not being used for now.
 flexiforce_sensors:
   - name: "thumb"
     analog_port: 0
@@ -106,10 +107,10 @@ flexiforce_sensors:
       - name: "thumb_abd_joint"
         ratio: 1.0
 
-  - name: "little_abd"
-    analog_port: 9
-    gain: -0.00969
-    bias: 0.0
-    joints:
-      - name: "little_abd_joint"
-        ratio: 1.0
+  # - name: "little_abd"
+  #   analog_port: 9
+  #   gain: -0.00969
+  #   bias: 0.0
+  #   joints:
+  #     - name: "little_abd_joint"
+  #       ratio: 1.0

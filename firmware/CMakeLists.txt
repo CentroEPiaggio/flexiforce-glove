@@ -9,5 +9,5 @@ add_definitions(-DUSB_CON)
 generate_arduino_firmware(flexiforce
   SRCS flexiforce_publisher.cpp ${ROS_LIB_DIR}/time.cpp
   BOARD micro
-  PORT /dev/ttyACM2
+  PORT /dev/ttyACM0
 )

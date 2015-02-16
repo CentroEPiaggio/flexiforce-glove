@@ -41,12 +41,14 @@
 #include <ros/ros.h>
 #include <sensor_msgs/JointState.h>
 #include <std_msgs/Int16MultiArray.h>
+ #include <std_msgs/Float64MultiArray.h>
 
 // IMPORTANT TODO: avoid global variables, convert this in a class instead
 
 // create the objects where to store the parameters
 unsigned int n_sensors_;
 unsigned int n_joints_;
+unsigned int n_joints_total_;
 XmlRpc::XmlRpcValue flexiforce_setup_;
 std_msgs::Int16MultiArray msg_ports_;
 std::vector<double> gains_;
@@ -63,7 +65,10 @@ ros::Publisher pub_flexiforce_analog_ports_;
 
 // and the data to be published
 sensor_msgs::JointState joint_states_;
-std_msgs::Int16MultiArray calibrated_data_;
+std_msgs::Float64MultiArray calibrated_data_;
+
+// a flag to set the home position
+bool isInit_ = false;
 
 void parseParameters(const XmlRpc::XmlRpcValue &sensors)
 {
@@ -80,6 +85,8 @@ void parseParameters(const XmlRpc::XmlRpcValue &sensors)
   // resize also the data to be published
   calibrated_data_.data.resize( n_sensors_ );
   calibrated_data_.layout.dim.resize( n_sensors_ );
+
+  n_joints_total_ = 0;
 
   for( int i = 0; i < n_sensors_; i++ )
   {
@@ -114,7 +121,7 @@ void parseParameters(const XmlRpc::XmlRpcValue &sensors)
     {
         ROS_ASSERT(current_sensor["gain"].getType() == XmlRpc::XmlRpcValue::TypeDouble);
         gains_[i] = current_sensor["gain"];
-        std::cout << current_sensor["name"] << " gain " << gains_[i] << std::endl;
+        //std::cout << current_sensor["name"] << " gain " << gains_[i] << std::endl;
     }
     else
     {
@@ -127,7 +134,7 @@ void parseParameters(const XmlRpc::XmlRpcValue &sensors)
         ROS_ASSERT(current_sensor["bias"].getType() == XmlRpc::XmlRpcValue::TypeDouble);
         bias_[i] = current_sensor["bias"];
 
-        std::cout << current_sensor["name"] << " bias " << bias_[i] << std::endl;
+        //std::cout << current_sensor["name"] << " bias " << bias_[i] << std::endl;
     }
     else
     {
@@ -161,13 +168,15 @@ void parseParameters(const XmlRpc::XmlRpcValue &sensors)
             {
                 ROS_ASSERT(current_joint["ratio"].getType() == XmlRpc::XmlRpcValue::TypeDouble);
                 joint_ratios_.push_back( current_joint["ratio"] );
-                std::cout << joint_states_.name[j] << " ratio " << joint_ratios_[j] << std::endl;
+                //std::cout << joint_states_.name[j] << " ratio " << joint_ratios_[j] << std::endl;
             }
             else
             {
                 ROS_ERROR("No ration value for the current joint of the current sensor. Check the yaml configuration for this sensor");
                 return;
             }
+
+            n_joints_total_++;
         }
     }
     else
@@ -178,10 +187,10 @@ void parseParameters(const XmlRpc::XmlRpcValue &sensors)
   }
 
   // and resize the joint states message with the amount of names
-  n_joints_ = joint_states_.name.size();
-  joint_states_.position.resize( n_joints_ );
-  joint_states_.velocity.resize( n_joints_ );
-  joint_states_.effort.resize( n_joints_ );
+  std::cout << "n_joints_total_: " << n_joints_total_ << std::endl;
+  joint_states_.position.resize( n_joints_total_ );
+  joint_states_.velocity.resize( n_joints_total_ );
+  joint_states_.effort.resize( n_joints_total_ );
 
   pub_flexiforce_analog_ports_.publish(msg_ports_);
 
@@ -191,15 +200,29 @@ void parseParameters(const XmlRpc::XmlRpcValue &sensors)
 // calback function that publishes a calibrated values and a joint state message when a new raw value arrives
 void publishJointStates(const std_msgs::Int16MultiArray &data)
 {
-    for(int i = 0; i < n_sensors_; i++)
+    if( !(isInit_) )
     {
-        // first calibrate data     
-        calibrated_data_.data[i] = data.data[i]*gains_[i] + bias_[i];
+        for(int i = 0; i < n_sensors_; i++)
+        {
+            // set the current pose as the reference pose, tyipically, the hand extended   
+            bias_[i] = bias_[i] - data.data[i]*gains_[i];
+        }
+        isInit_ = true;
+    }
+    else
+    {
+        int joint_counter = 0;
+        for(int i = 0; i < n_sensors_; i++)
+        {
+            // first calibrate data     
+            calibrated_data_.data[i] = data.data[i]*gains_[i] + bias_[i];
 
-        // second compute joint angles
-        for(int j = 0; j < n_joints_at_sensor[i]; j++)
-        {            
-            joint_states_.position[j] = calibrated_data_.data[i]*joint_ratios_[j];
+            // second compute joint angles
+            for(int j = 0; j < n_joints_at_sensor[i]; j++)
+            {            
+                joint_states_.position[joint_counter] = calibrated_data_.data[i]*joint_ratios_[j];
+                joint_counter++;
+            }
         }
     }
 
@@ -218,11 +241,11 @@ int main(int argc, char** argv)
     nh_.param<std::string>("hand_name", hand_name_, "soft_hand");
 
     // subscribe to the flexiforce raw values
-    sub_flexiforce_raw_ = nh_.subscribe("/flexiforce/flexiforce_raw_values", 1000, publishJointStates);
+    sub_flexiforce_raw_ = nh_.subscribe("/flexiforce/raw_values", 1000, publishJointStates);
 
     // advertise the calibrated and the joint states values
     pub_joint_states_ = nh_.advertise<sensor_msgs::JointState>("/flexiforce/joint_states", 1000);
-    pub_flexiforce_calibrated_ = nh_.advertise<std_msgs::Int16MultiArray>("/flexiforce/flexiforce_calibrated_values", 1000);
+    pub_flexiforce_calibrated_ = nh_.advertise<std_msgs::Float64MultiArray>("/flexiforce/calibrated_values", 1000);
     // latch the port configuration
     pub_flexiforce_analog_ports_ = nh_.advertise<std_msgs::Int16MultiArray>("/flexiforce/connected_ports", 1000); 
 

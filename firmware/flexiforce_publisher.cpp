@@ -71,7 +71,7 @@ void configurePorts(const std_msgs::Int16MultiArray & ports)
   }
 }
 
-ros::Publisher pub_sensor_values_("/flexiforce/flexiforce_raw_values", &sensor_values_);
+ros::Publisher pub_sensor_values_("/flexiforce/raw_values", &sensor_values_);
 ros::Subscriber<std_msgs::Int16MultiArray> sub_ports_("/flexiforce/connected_ports", &configurePorts);
 
 void setup() 
@@ -79,7 +79,7 @@ void setup()
   nh_.initNode();
   nh_.advertise(pub_sensor_values_);
   nh_.subscribe(sub_ports_);
-  sensor_values_.data_length = 7;
+  sensor_values_.data_length = 6;
 }
 
 void loop() 
@@ -93,13 +93,14 @@ void loop()
     }
     */
     
-    sensor_values_.data[0] = analogRead( 0 );
-    sensor_values_.data[1] = analogRead( 3 );
-    sensor_values_.data[2] = analogRead( 5 );
-    sensor_values_.data[3] = analogRead( 7 );
-    sensor_values_.data[4] = analogRead( 6 );
-    sensor_values_.data[5] = analogRead( 1 );
-    sensor_values_.data[6] = analogRead( 9 );
+    
+    sensor_values_.data[0] = analogRead( 1 ); // thumb 
+    sensor_values_.data[1] = analogRead( 3 ); // index
+    sensor_values_.data[2] = analogRead( 5 ); // middle
+    sensor_values_.data[3] = analogRead( 7 ); // ring
+    sensor_values_.data[4] = analogRead( 9 ); // little
+    sensor_values_.data[5] = analogRead( 0 ); // thumb abd
+    // sensor_values_.data[6] = analogRead(  ); // little abd
 
     // publish the message
     pub_sensor_values_.publish(&sensor_values_);

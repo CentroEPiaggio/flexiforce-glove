@@ -1,9 +1,9 @@
-sensor-gloves
-=============
+Flexiforce glove
+================
 
-Several types of sensorized gloves developed for the Pisa/IIT Soft hand (and eventually for human hands).
+This is a glove based on [FlexiForce](http://www.tekscan.com/store/flexiforce-sensors.html) by Tekscan and Arduino, in this case micro. 
 
-You need the Pisa/IIT soft hand packages available here [pisa-iit-soft-hand](https://github.com/CentroEPiaggio/pisa-iit-soft-hand).
+It is meant ot be used for the Pisa/IIT Soft hand (and eventually for human hands). You might find useful to use the Pisa/IIT SoftHand package available here [pisa-iit-soft-hand](https://github.com/CentroEPiaggio/pisa-iit-soft-hand) to visualize the hand.
 
 1. Flexiforce-based glove
 -------------------------
@@ -12,11 +12,11 @@ It is set up to work with Arduino micro board.
 
 Build the firmware with standard `catkin_make`, or specifically with:
 
-`catkin_make sensor_gloves_firmware_flexiforce`
+`catkin_make flexiforce_glove_firmware_flexiforce`
 
 And upload the firmware with (for Arduino Micro you should do it by pushing the reset button and upload before the arduino enters in run mode, look at the leds):
 
-`catkin_make sensor_gloves_firmware_flexiforce-upload`
+`catkin_make flexiforce_glove_firmware_flexiforce-upload`
 
 Note: Check that the arduino board connects to `/dev/ttyACM0`, otherwise you need to change the `firmware/CMakeLists.txt` file as well as `launch/flexiforce_glove.launch`, you will se the PORT label, and provide privileges with `sudo chmod 777 /dev/ttyACM0`.
 
@@ -26,13 +26,13 @@ Tip: add your user to the `dialout` group to avoid sudoing by running:
 
 Finally, set properly the `flexiforce_setup.yaml` (instructions within), and run:
 
-`roslaunch sensor_gloves flexiforce_glove.launch`
+`roslaunch flexiforce_glove flexiforce_glove.launch`
 
 Current topics:
 
- - `/flexiforce/flexiforce_raw_values`
+ - `/flexiforce/raw_values`
 
- - `/flexiforce/flexiforce_calibrated_values`
+ - `/flexiforce/calibrated_values`
 
  - `/flexiforce/joint_states`
 

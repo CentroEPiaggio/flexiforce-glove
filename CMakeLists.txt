@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(sensor_gloves)
+project(flexiforce_glove)
 
 find_package(catkin REQUIRED
 	rosserial_arduino

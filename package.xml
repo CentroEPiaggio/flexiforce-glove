@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package>
-  <name>sensor_gloves</name>
+  <name>flexiforce_glove</name>
   <version>0.0.0</version>
-  <description>The sensor_gloves package</description>
+  <description>The flexiforce_glove package</description>
 
   <maintainer email="cjrosales@gmail.com">Carlos Rosales</maintainer>
 
@@ -10,7 +10,7 @@
 
   <!-- developed under the PaCMan project -->
   <url type="project">http://www.pacman-project.eu/</url>
-  <url type="repository">https://github.com/CentroEPiaggio/sensor-gloves</url>
+  <url type="repository">https://github.com/CentroEPiaggio/flexiforce-glove</url>
 
   <author email="santaeragaspare@inwind.it">Gaspare Santaera</author>
   <author email="ema.lbt@hotmail.it">Emanuele Luberto</author>

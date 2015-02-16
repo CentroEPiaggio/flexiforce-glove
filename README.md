@@ -1,12 +1,8 @@
-Flexiforce glove
-================
+# Flexiforce Glove for the Pisa/IIT SoftHand
 
-This is a glove based on [FlexiForce](http://www.tekscan.com/store/flexiforce-sensors.html) by Tekscan and Arduino, in this case micro. 
+This is a [FlexiForce](http://www.tekscan.com/store/flexiforce-sensors.html)/[Arduino]()-based glove designed for the Pisa/IIT SoftHand (and eventually for human hands). You might find useful the Pisa/IIT SoftHand package available here [pisa-iit-soft-hand](https://github.com/CentroEPiaggio/pisa-iit-soft-hand) to visualize the hand.
 
-It is meant ot be used for the Pisa/IIT Soft hand (and eventually for human hands). You might find useful to use the Pisa/IIT SoftHand package available here [pisa-iit-soft-hand](https://github.com/CentroEPiaggio/pisa-iit-soft-hand) to visualize the hand.
-
-1. Flexiforce-based glove
--------------------------
+## How to upload the firmware
 
 It is set up to work with Arduino micro board.
 
@@ -28,13 +24,17 @@ Finally, set properly the `flexiforce_setup.yaml` (instructions within), and run
 
 `roslaunch flexiforce_glove flexiforce_glove.launch`
 
-Current topics:
+Current topics are:
 
  - `/flexiforce/raw_values`
 
  - `/flexiforce/calibrated_values`
 
  - `/flexiforce/joint_states`
+
+ - `/flexiforce/
+
+## Test
 
 Test with a message as if it comes from the board (you need to tell that the board is not connect in the launch file), and then publish on `/flexiforce/flexiforce_raw_values` with:
 
@@ -57,5 +57,9 @@ data:
 
 Check the result with `rostopic echo /flexiforce/joint_states`, or any other topic.
 
-ToDO: calibration method to obtain gain and offset for each sensor automatically.
-ToDO: check that the number of sensor in yaml file matches the size of the raw data.
+## ToDo's
+
+- [ ] Calibration method to obtain gain and offset for each sensor automatically
+- [ ] Validate that the number of sensor in yaml file matches the size of the raw data
+- [ ] Generalize for n-sensors in the firmware
+

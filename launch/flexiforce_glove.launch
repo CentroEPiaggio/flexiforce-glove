@@ -1,6 +1,7 @@
 <launch>
 	<!-- specify whether the arduino board is connected or not -->
 	<arg name="isBoardConnected" default="true"/>
+	<arg name="hand_name" default="soft_hand_right"/>
 
 	<!-- remember to set the parameters properly -->
 	<rosparam command="load" file="$(find flexiforce_glove)/config/flexiforce_setup.yaml" />

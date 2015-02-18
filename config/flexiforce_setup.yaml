@@ -10,7 +10,6 @@
 flexiforce_sensors:
   - name: "thumb"
     analog_port: 0
-    # 0.5732*pi/180
     gain: 0.01
     bias: 0.0
     joints:
@@ -25,7 +24,6 @@ flexiforce_sensors:
 
   - name: "index"
     analog_port: 3
-    # 0.5590*pi/180
     gain: 0.0097
     bias: 0.0
     joints:
@@ -44,8 +42,7 @@ flexiforce_sensors:
 
   - name: "middle"
     analog_port: 5
-    #0.8833*pi/180
-    gain: 0.0154
+    gain: 0.0104
     bias: 0.0
     joints:
       - name: "middle_inner_joint"
@@ -63,7 +60,6 @@ flexiforce_sensors:
 
   - name: "ring"
     analog_port: 7
-    #0.6569*pi/180
     gain: 0.0114
     bias: 0.0
     joints:
@@ -82,7 +78,6 @@ flexiforce_sensors:
 
   - name: "little"
     analog_port: 6
-    #1.0345*pi/180
     gain: 0.01805
     bias: 0.0
     joints:
